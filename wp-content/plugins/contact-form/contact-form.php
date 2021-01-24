@@ -19,7 +19,7 @@ add_shortcode('formulaire_contact', 'contactForm');
 
 function contactForm()
 {
-    $content = '';
+    $content = '<div class="well">';
 
     $content .= '<div class="jumbotron jumbotron-sm">
                         <div class="container">
@@ -36,18 +36,18 @@ function contactForm()
                             <div class="col-md-12 pt-4 pb-4">
                                 <div class="col-md-12">
                                     <div class="well well-sm">
-                                        <form>
+                                        <form method="post" action="#">
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="name">
                                                         Nom </label>
-                                                    <input type="text" class="form-control" id="nom" placeholder="Entrer votre nom" required="required" />
+                                                    <input type="text" class="form-control" name="nom" placeholder="Entrer votre nom" required="required" />
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="name">
                                                         Prenom </label>
-                                                    <input type="text" class="form-control" id="prenom" placeholder="Entrer votre prenom" required="required" />
+                                                    <input type="text" class="form-control" name="prenom" placeholder="Entrer votre prenom" required="required" />
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="email">
@@ -55,7 +55,7 @@ function contactForm()
                                                     <div class="input-group">
                                                         <span class="input-group-addon"><span class="glyphicon glyphicon-envelope"></span>
                                                         </span>
-                                                        <input type="email" class="form-control" id="email" placeholder="Entrer votre email" required="required" /></div>
+                                                        <input type="email" class="form-control" name="email" placeholder="Entrer votre email" required="required" /></div>
                                                 </div>
                                                 
                                             </div>
@@ -63,7 +63,7 @@ function contactForm()
                                                 <div class="form-group mb-10">
                                                     <label for="name">
                                                         Object </label>
-                                                    <input type="text" class="form-control" id="object" placeholder="Entrer l\'object " required="required" />
+                                                    <input type="text" class="form-control" name="object" placeholder="Entrer l\'object " required="required" />
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="name">
@@ -73,8 +73,8 @@ function contactForm()
                                                 </div>
                                             </div>
                                             <div class="col-md-12">
-                                                <button type="submit" class="btn btn-primary float-right" id="btnContactUs">
-                                                    Send Message</button>
+                                                <button type="submit" name="formulaire_contact_submit" class="btn btn-primary float-right" id="btnContactUs">
+                                                    Envoyer </button>
                                             </div>
                                         </div>
                                         </form>
@@ -85,11 +85,41 @@ function contactForm()
                         </div>
                     </div>
     ';
-    $content .= '<div>';
+    $content .= '</div>';
 
     return $content;
 }
 
+
+function formulaire_contact_capture()
+{
+    if (isset($_POST['formulaire_contact_submit'])) {
+        //tester les names du formulaire d'abord 
+
+        // echo ('<pre>');
+        // print_r($_POST);
+        // echo ('</pre>');
+
+        $nom = sanitize_text_field($_POST['nom']);
+        $prenom = sanitize_text_field($_POST['prenom']);
+        $email = sanitize_text_field($_POST['email']);
+        $object = sanitize_text_field($_POST['object']);
+        $message = sanitize_textarea_field($_POST['message']);
+
+        $to = 'mosila2138@gmail.com';
+        $subject = 'Formulaire Comtact';
+        $content = '' . $prenom . ' - ' . $nom . ' - ' . $email . ' - ' . $message;
+
+        wp_mail($to, $subject, $content);
+
+        echo ('<div class="alert-success mb-5 p-5">');
+        echo ('<h3>' . $prenom . ' ' . $nom . '</h3>');
+        echo (' Votre message est bien prise en compte, merci !');
+        echo ('</div>');
+    }
+}
+
+add_shortcode('alert_success', 'formulaire_contact_capture');
 
 // add_action('wp_footer', 'testhello');
 
